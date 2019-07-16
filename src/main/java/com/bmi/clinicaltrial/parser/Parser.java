@@ -6,7 +6,5 @@ import java.util.Map;
 
 public interface Parser
 {
-    public List<String> parse(String originalStr);
-
     public Map<String, String> parseToMap(List<String> originalStr);
 }

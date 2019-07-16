@@ -44,7 +44,7 @@ public class ParserDate implements Parser
                 //  ex) 1800-13-34, Prefix에 없는 문자
                 for(int i = 1; i <= dateMatcher.groupCount(); i++)
                 {
-                    logger.info(i + " : " + dateMatcher.group(i));
+                    //logger.info(i + " : " + dateMatcher.group(i));
                 }
                 resultMap.put(dateMatcher.group(1), dateMatcher.group(2));
             }
@@ -54,11 +54,5 @@ public class ParserDate implements Parser
             }
         }
         return resultMap;
-    }
-
-    @Override
-    public List<String> parse(String originalStr)
-    {
-        return null;
     }
 }

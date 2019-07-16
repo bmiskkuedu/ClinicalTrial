@@ -29,18 +29,50 @@ public class MainController
 
     @GetMapping("/patient")
     @ResponseBody
-    public int findNumberOfPatient(@RequestParam(required = false) String[] birthdate,
-                                   @RequestParam(required = false) String gender)
-    {
-        //  birthdate check
-        List<String> birthDateList = Arrays.asList(birthdate);
+    public int findNumberOfPatient(
+            //  생년월일 체크
+            @RequestParam(required = false) List<String> birthdate,
+            //  성별 체크
+            @RequestParam(required = false, name = "gender") String gender,
+            @RequestParam(required = false, name = "gender:not") String exGender,
+            //@RequestParam(required = false, name="_has:condition:patient:code") String[] condition,
+            //@RequestParam(required = false, name="_has:condition:patient:code:not") String[] exCondition,
+            //  질병 체크
+            @RequestParam(required = false, name="_has:observation:patient:code") List<String> observation,
+            @RequestParam(required = false, name="_has:observation:patient:code:not") List<String> exObservation,
+            //  처방 체크
+            @RequestParam(required = false, name="_has:medicationstatement:patient:code") List<String> medicationStatement,
+            @RequestParam(required = false, name="_has:medicationstatement:patient:code:not") List<String> exMedicationStatement,
 
-        Map<String, String> birthDateMap = parserDate.parseToMap(birthDateList);
+            //  알러지 체크
+
+            //  변하지 않음, 항상 검색 결과의 count 만을 원함
+            @RequestParam(required = false, name = "summary", defaultValue = "count") String summary
+            )
+    {
+        //  생년월일 체크
+        Map<String, String> birthDateMap = parserDate.parseToMap(birthdate);
         logger.info(birthDateMap.toString());
 
-        //  gender check
-        //  todo : gender null 처리 / 멀티 value ???
+        //  성별 체크
         logger.info("gender : " + gender);
+        logger.info("exGender : " + exGender);
+
+        //  질병 체크
+        // TODO: 2019-07-16 질병 유무
+        logger.info("observation : " + observation);
+        logger.info("exObservation : " + exObservation);
+
+        //  처방 체크
+        // TODO: 2019-07-16 처방 유무
+        logger.info("medicationStatement : " + medicationStatement);
+        logger.info("exMedicationStatement : " + exMedicationStatement);
+
+        //  알러지 체크
+        // TODO: 2019-07-16 알러지 유무
+
+        //  count 만 사용 확인
+        logger.info("summary : " +  summary);
 
         return 0;
     }
