@@ -1,5 +1,6 @@
 package com.bmi.clinicaltrial.parser;
 
+import com.bmi.clinicaltrial.parser.i.Parser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

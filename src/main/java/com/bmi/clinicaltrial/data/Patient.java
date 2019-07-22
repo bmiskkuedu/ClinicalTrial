@@ -5,8 +5,13 @@ import java.util.Map;
 
 public class Patient
 {
-    public Map<String, String> birthdate = new HashMap<>();
-    public Map<String, String> gender = new HashMap<>();
+    public Map<String, String> birthdateMap = new HashMap<>();
 
+    public Map<String, String> genderMap = new HashMap<>();
 
+    public Map<String, String> observationMap = new HashMap<>();
+
+    public Map<String, String> medicationstatementMap = new HashMap<>();
+
+    public Map<String, String> allergyintoleranceMap = new HashMap<>();
 }

@@ -1,6 +1,7 @@
 package com.bmi.clinicaltrial.parser;
 
-import com.bmi.clinicaltrial.prefixes.Prefix;
+import com.bmi.clinicaltrial.exception.CustomException;
+import com.bmi.clinicaltrial.parser.i.IDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class ParserDate implements Parser
+public class ImplDateParser implements IDate
 {
     private final String tag = this.getClass().getSimpleName();
 
@@ -20,17 +21,17 @@ public class ParserDate implements Parser
     private final static String REGEX_DATE = "^([a-z]*)(\\d{4}-\\d{2}-\\d{2})$";
 
     @Override
-    public Map<String, String> parseToMap(List<String> originalStr)
+    public Map<String, String> parseToMap(List<String> originalStr) throws Exception
     {
         Map<String, String> resultMap = new HashMap<>();
         Pattern datePattern = Pattern.compile(REGEX_DATE);
         Matcher dateMatcher;
 
-        for(String s : originalStr)
+        for (String s : originalStr)
         {
             dateMatcher = datePattern.matcher(s);
 
-            if(dateMatcher.find())
+            if (dateMatcher.find())
             {
 
                 /**
@@ -42,15 +43,13 @@ public class ParserDate implements Parser
                  */
                 // TODO: 이상한 값 체크
                 //  ex) 1800-13-34, Prefix에 없는 문자
-                for(int i = 1; i <= dateMatcher.groupCount(); i++)
-                {
-                    //logger.info(i + " : " + dateMatcher.group(i));
-                }
-                resultMap.put(dateMatcher.group(1), dateMatcher.group(2));
+                String key = dateMatcher.group(1).isEmpty() ? "eq" : dateMatcher.group(1);  //  prefix가 없는 경우 eq 취급
+                resultMap.put(key, dateMatcher.group(2));
             }
             else
             {
                 logger.error("birthdate match not find");
+                throw new CustomException("INVALID BIRTHDATE");
             }
         }
         return resultMap;

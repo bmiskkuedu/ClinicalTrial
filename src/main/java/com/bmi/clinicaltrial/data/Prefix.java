@@ -1,4 +1,4 @@
-package com.bmi.clinicaltrial.prefixes;
+package com.bmi.clinicaltrial.data;
 
 public enum Prefix
 {
