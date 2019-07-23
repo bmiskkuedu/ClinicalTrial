@@ -1,17 +1,86 @@
 package com.bmi.clinicaltrial.data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Patient
 {
-    public Map<String, String> birthdateMap = new HashMap<>();
+    public Map<String, String> birthdateMap;
+    public Map<String, String> genderMap;
+    public Map<String, List<String>> observationMap;
+    public Map<String, String> medicationstatementMap;
+    public Map<String, String> allergyintoleranceMap;
 
-    public Map<String, String> genderMap = new HashMap<>();
 
-    public Map<String, String> observationMap = new HashMap<>();
+    public Patient()
+    {
+        birthdateMap = new HashMap<>();
+        genderMap = new HashMap<>();
+        observationMap = new HashMap<>();
+        medicationstatementMap = new HashMap<>();
+        allergyintoleranceMap = new HashMap<>();
+    }
 
-    public Map<String, String> medicationstatementMap = new HashMap<>();
+    public Map<String, String> getBirthdateMap()
+    {
+        return birthdateMap;
+    }
 
-    public Map<String, String> allergyintoleranceMap = new HashMap<>();
+    public void setBirthdateMap(Map<String, String> birthdateMap)
+    {
+        this.birthdateMap = birthdateMap;
+    }
+
+    public Map<String, String> getGenderMap()
+    {
+        return genderMap;
+    }
+
+    public void setGenderMap(Map<String, String> genderMap)
+    {
+        this.genderMap = genderMap;
+    }
+
+    public Map<String, List<String>> getObservationMap()
+    {
+        return observationMap;
+    }
+
+    public void setObservationMap(Map<String, List<String>> observationMap)
+    {
+        this.observationMap = observationMap;
+    }
+
+    public Map<String, String> getMedicationstatementMap()
+    {
+        return medicationstatementMap;
+    }
+
+    public void setMedicationstatementMap(Map<String, String> medicationstatementMap)
+    {
+        this.medicationstatementMap = medicationstatementMap;
+    }
+
+    public Map<String, String> getAllergyintoleranceMap()
+    {
+        return allergyintoleranceMap;
+    }
+
+    public void setAllergyintoleranceMap(Map<String, String> allergyintoleranceMap)
+    {
+        this.allergyintoleranceMap = allergyintoleranceMap;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Patient{" +
+                "birthdateMap=" + birthdateMap +
+                ", genderMap=" + genderMap +
+                ", observationMap=" + observationMap +
+                ", medicationstatementMap=" + medicationstatementMap +
+                ", allergyintoleranceMap=" + allergyintoleranceMap +
+                '}';
+    }
 }

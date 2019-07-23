@@ -1,5 +1,6 @@
 package com.bmi.clinicaltrial.parser;
 
+import com.bmi.clinicaltrial.exception.CustomAdvice;
 import com.bmi.clinicaltrial.exception.CustomException;
 import com.bmi.clinicaltrial.parser.i.IDate;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class ImplDateParser implements IDate
+public class DateParserImpl implements IDate
 {
     private final String tag = this.getClass().getSimpleName();
 
@@ -41,15 +42,14 @@ public class ImplDateParser implements IDate
                  *  2   :   date format (\\d{4}-\\d{2}-\\d{2})
                  *  ...
                  */
-                // TODO: 이상한 값 체크
-                //  ex) 1800-13-34, Prefix에 없는 문자
+                // TODO: 이상한 값 체크 ex) ?
                 String key = dateMatcher.group(1).isEmpty() ? "eq" : dateMatcher.group(1);  //  prefix가 없는 경우 eq 취급
                 resultMap.put(key, dateMatcher.group(2));
             }
             else
             {
                 logger.error("birthdate match not find");
-                throw new CustomException("INVALID BIRTHDATE");
+                throw new CustomException(CustomAdvice.ErrorCode.INVAILD_BIRTHDATE);
             }
         }
         return resultMap;

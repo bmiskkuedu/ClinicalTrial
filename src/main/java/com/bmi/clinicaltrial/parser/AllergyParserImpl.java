@@ -5,7 +5,7 @@ import com.bmi.clinicaltrial.parser.i.IAllergy;
 import java.util.List;
 import java.util.Map;
 
-public class ImplAllergyParser implements IAllergy
+public class AllergyParserImpl implements IAllergy
 {
     @Override
     public Map<String, String> parseToMap(List<String> originalStr, List<String> secondList) throws Exception
@@ -13,9 +13,5 @@ public class ImplAllergyParser implements IAllergy
         return null;
     }
 
-    @Override
-    public Map<String, String> parseToMap(List<String> originalStr) throws Exception
-    {
-        return null;
-    }
+
 }

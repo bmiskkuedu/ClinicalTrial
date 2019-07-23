@@ -11,6 +11,12 @@ public class CustomException extends Exception
         this.message = message;
     }
 
+    public CustomException(CustomAdvice.ErrorCode code)
+    {
+        this.error = code;
+    }
+
+
     public CustomException(String message)
     {
         this.message = message;

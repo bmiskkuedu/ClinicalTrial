@@ -10,7 +10,7 @@ public class CustomAdvice
     public enum ErrorCode
     {
         INVAILD_BIRTHDATE,
-        CODE2,
+        INVALID_GENDER,
         CODE3,
         CODE4;
     }
@@ -18,6 +18,6 @@ public class CustomAdvice
     @ExceptionHandler(CustomException.class)
     public ResponseEntity result(CustomException ce)
     {
-        return ResponseEntity.badRequest().body(ce.message);
+        return ResponseEntity.badRequest().body(ce.error);
     }
 }

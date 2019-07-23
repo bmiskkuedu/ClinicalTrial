@@ -5,5 +5,4 @@ import java.util.Map;
 
 public interface Parser
 {
-    public Map<String, String> parseToMap(List<String> originalStr) throws Exception;
 }
