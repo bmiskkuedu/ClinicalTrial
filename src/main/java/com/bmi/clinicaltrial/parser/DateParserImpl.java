@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
 @Service
 public class DateParserImpl implements IDate
 {
-    private final String tag = this.getClass().getSimpleName();
-
     private Logger logger = LogManager.getLogger();
     private final static String REGEX_DATE = "^([a-z]*)(\\d{4}-\\d{2}-\\d{2})$";
 

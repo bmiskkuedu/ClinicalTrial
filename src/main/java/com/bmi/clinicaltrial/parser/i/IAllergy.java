@@ -5,5 +5,7 @@ import java.util.Map;
 
 public interface IAllergy extends Parser
 {
-    Map<String, String> parseToMap(List<String> originalStr, List<String> secondList ) throws Exception;
+    Map<String, List<String>> parser(List<String> allergyList, List<String> notAllergyList, String status ) throws Exception;
+
+    Map<String, List<String>> parser(List<String> allergyList, List<String> notAllergyList );
 }

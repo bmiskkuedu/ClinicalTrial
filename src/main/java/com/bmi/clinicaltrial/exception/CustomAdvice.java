@@ -11,7 +11,7 @@ public class CustomAdvice
     {
         INVAILD_BIRTHDATE,
         INVALID_GENDER,
-        CODE3,
+        INVALID_CLINICAL_STATUS,
         CODE4;
     }
 

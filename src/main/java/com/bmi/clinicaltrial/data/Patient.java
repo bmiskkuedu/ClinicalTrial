@@ -8,9 +8,10 @@ public class Patient
 {
     public Map<String, String> birthdateMap;
     public Map<String, String> genderMap;
+    public Map<String, List<String>> conditionMap;
     public Map<String, List<String>> observationMap;
     public Map<String, String> medicationstatementMap;
-    public Map<String, String> allergyintoleranceMap;
+    public Map<String, List<String>> allergyintoleranceMap;
 
 
     public Patient()
@@ -62,12 +63,22 @@ public class Patient
         this.medicationstatementMap = medicationstatementMap;
     }
 
-    public Map<String, String> getAllergyintoleranceMap()
+    public Map<String, List<String>> getConditionMap()
+    {
+        return conditionMap;
+    }
+
+    public void setConditionMap(Map<String, List<String>> conditionMap)
+    {
+        this.conditionMap = conditionMap;
+    }
+
+    public Map<String, List<String>> getAllergyintoleranceMap()
     {
         return allergyintoleranceMap;
     }
 
-    public void setAllergyintoleranceMap(Map<String, String> allergyintoleranceMap)
+    public void setAllergyintoleranceMap(Map<String, List<String>> allergyintoleranceMap)
     {
         this.allergyintoleranceMap = allergyintoleranceMap;
     }
@@ -78,6 +89,7 @@ public class Patient
         return "Patient{" +
                 "birthdateMap=" + birthdateMap +
                 ", genderMap=" + genderMap +
+                ", conditionMap=" + conditionMap +
                 ", observationMap=" + observationMap +
                 ", medicationstatementMap=" + medicationstatementMap +
                 ", allergyintoleranceMap=" + allergyintoleranceMap +
