@@ -12,7 +12,9 @@ public class CustomAdvice
         INVAILD_BIRTHDATE,
         INVALID_GENDER,
         INVALID_CLINICAL_STATUS,
-        CODE4;
+        INVALID_CONDITION,
+        INVALID_ALLERGY
+        ;
     }
 
     @ExceptionHandler(CustomException.class)

@@ -1,6 +1,9 @@
 package com.bmi.clinicaltrial.parser;
 
 import com.bmi.clinicaltrial.data.Modifier;
+import com.bmi.clinicaltrial.data.fhir.base.Coding;
+import com.bmi.clinicaltrial.exception.CustomAdvice;
+import com.bmi.clinicaltrial.exception.CustomException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,5 +25,26 @@ public class Utils
         }
 
         return map;
+    }
+
+    /**
+     항상 snomed.com|456789 의 형태이어야 함
+     */
+    static Coding getCoding(String str, CustomAdvice.ErrorCode errorCode) throws CustomException
+    {
+        String[] splitStr = str.split("\\|");
+
+        if(splitStr.length != 2)
+        {
+            throw new CustomException(errorCode);
+        }
+        else
+        {
+            Coding coding = new Coding();
+            coding.system = splitStr[0];
+            coding.code = splitStr[1];
+
+            return coding;
+        }
     }
 }

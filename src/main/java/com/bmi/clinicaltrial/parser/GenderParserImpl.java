@@ -30,12 +30,12 @@ public class GenderParserImpl implements IGender
     {
         Map<String, String> genderMap = new HashMap<>();
 
-        if(!gender.isEmpty())
+        if(gender != null && !gender.isEmpty())
         {
             genderMap.put(Modifier.eq.getModifier(), checkGender(gender.toLowerCase()));
         }
 
-        if(!nGender.isEmpty())
+        if(nGender != null && !nGender.isEmpty())
         {
             genderMap.put(Modifier.not.getModifier(), checkGender(nGender.toLowerCase()));
         }

@@ -1,6 +1,5 @@
 package com.bmi.clinicaltrial.controller;
 
-import com.bmi.clinicaltrial.data.ClinicalStatus;
 import com.bmi.clinicaltrial.data.Gender;
 import com.bmi.clinicaltrial.data.Patient;
 import com.bmi.clinicaltrial.parser.*;
@@ -41,7 +40,7 @@ public class MainController
         return "Hello World!";
     }
 
-    @GetMapping("/patient")
+    @GetMapping("/Patient")
     @ResponseBody
     public int findNumberOfPatient(
             //  생년월일 체크
@@ -51,7 +50,7 @@ public class MainController
              * 성별 체크
              * @see Gender
              */
-            @RequestParam(required = false, name = "gender", defaultValue = Gender.) String gender,
+            @RequestParam(required = false, name = "gender") String gender,
             @RequestParam(required = false, name = "gender:not", defaultValue = "") String nGender,
 
             /**
@@ -70,6 +69,9 @@ public class MainController
              */
             @RequestParam(required = false, name="_has:Observation:patient:code") List<String> observation,
             @RequestParam(required = false, name="_has:Observation:patient:code:not") List<String> nObservation,
+            @RequestParam(required = false, name="_has:Observation:patient:code-value-quantity") List<String> observationQuantity,
+            @RequestParam(required = false, name="_has:Observation:patient:code-value-quantity:not") List<String> notObservationQuantity,
+            @RequestParam(required = false, name="_has:Observation:patient:code-value-date") List<String> observationCodeAndDate,
 
             /**
              *  약물 처방 체크    *****
@@ -104,25 +106,18 @@ public class MainController
         patient.genderMap = genderParser.parser(gender, nGender);
 
         //  질병 체크
-        patient.conditionMap = conditionParser.parser(condition, nCondition);
+        patient.conditionMap = conditionParser.codeParser(condition, nCondition);
 
         //  검사 체크
-        patient.observationMap = observationParser.codeParser(observation, nObservation);
+        //patient.observationMap = observationParser.codeParser(observation, nObservation);
 
         // TODO: 2019-07-23
         //  처방 체크
         //logger.info("medicationStatement : " + medicationStatement);
         //logger.info("exMedicationStatement : " + exMedicationStatement);
 
-        // TODO: 2019-07-23
         //  알러지 체크
-        //logger.info("allergyintolerance : " + allergyintolerance);
-        //logger.info("exAllergyintolerance : " + exAllergyintolerance);
-        //  알러지 상태 확인
-        patient.allergyintoleranceMap = allergyParser.parser(allergyintolerance, nAllergyintolerance);
-
-
-        logger.info("valueQuantity : " + valueQuantity);
+        patient.allergyintoleranceMap = allergyParser.codeParser(allergyintolerance, nAllergyintolerance);
 
         //  count 만 사용 확인
         //logger.info("summary : " +  summary);

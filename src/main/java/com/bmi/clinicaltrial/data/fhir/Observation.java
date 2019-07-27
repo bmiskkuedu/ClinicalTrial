@@ -1,8 +1,24 @@
 package com.bmi.clinicaltrial.data.fhir;
 
+import com.bmi.clinicaltrial.data.fhir.base.Code;
+import com.bmi.clinicaltrial.data.fhir.base.Resource;
+import com.bmi.clinicaltrial.data.fhir.base.ValueQuantity;
+
 public class Observation extends Resource
 {
-     private ValueQuantity valueQuantity = new ValueQuantity();
+    private Code code = new Code();
+
+    private ValueQuantity valueQuantity = new ValueQuantity();
+
+    public Code getCode()
+    {
+        return code;
+    }
+
+    public void setCode(Code code)
+    {
+        this.code = code;
+    }
 
     public ValueQuantity getValueQuantity()
     {
@@ -13,4 +29,15 @@ public class Observation extends Resource
     {
         this.valueQuantity = valueQuantity;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Observation{" +
+                "code=" + code +
+                ", valueQuantity=" + valueQuantity +
+                '}';
+    }
+
+
 }

@@ -1,41 +1,54 @@
 package com.bmi.clinicaltrial.parser;
 
-import com.bmi.clinicaltrial.data.ClinicalStatus;
-import com.bmi.clinicaltrial.exception.CustomAdvice;
+import com.bmi.clinicaltrial.data.Modifier;
+import com.bmi.clinicaltrial.data.fhir.Allergy;
+import com.bmi.clinicaltrial.data.fhir.base.Code;
 import com.bmi.clinicaltrial.exception.CustomException;
 import com.bmi.clinicaltrial.parser.i.IAllergy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.bmi.clinicaltrial.exception.CustomAdvice.ErrorCode.INVALID_ALLERGY;
 
 @Service
 public class AllergyParserImpl implements IAllergy
 {
+    private Logger logger = LogManager.getLogger();
+
     @Override
-    public Map<String, List<String>> parser(List<String> allergyList, List<String> notAllergyList)
+    public Map<String, List<Allergy>> codeParser(List<String> allergyList, List<String> notAllergyList) throws Exception
     {
-        return Utils.getStringListMap(allergyList, notAllergyList);
+        Map<String, List<Allergy>> allergyMap = new HashMap<>();
+
+        checkStr(allergyList, allergyMap, Modifier.eq);
+        checkStr(notAllergyList, allergyMap, Modifier.not);
+
+        return allergyMap;
+
     }
 
-    @Override
-    public Map<String, List<String>> parser(List<String> allergyList, List<String> notAllergyList, String status) throws Exception
+    private void checkStr(List<String> list, Map<String, List<Allergy>> conditionMap, Modifier status) throws CustomException
     {
-        Map<String, List<String>> map = Utils.getStringListMap(allergyList, notAllergyList);
-
-        /*
-        // TODO: 2019-07-24 ClinicalStatus 어떻게 처리할 것인지에 대해 생각
-        ClinicalStatus cs = ClinicalStatus.getType(status.toLowerCase());
-
-        if(cs == ClinicalStatus.ERROR)
+        if (list != null && !list.isEmpty())
         {
-            throw new CustomException(CustomAdvice.ErrorCode.INVALID_CLINICAL_STATUS);
+            List<Allergy> allergyList = new ArrayList<>();
+            Allergy allergy = new Allergy();
+            Code code = new Code();
+
+            for (String s : list)
+            {
+                code.coding.add(Utils.getCoding(s, INVALID_ALLERGY));
+            }
+
+            allergy.setCode(code);
+            allergyList.add(allergy);
+            conditionMap.put(status.getModifier(), allergyList);
         }
-        else
-        {
-            map.put("clinical_status", cs.getStatus())
-        }
-        */
-        return map;
     }
 }

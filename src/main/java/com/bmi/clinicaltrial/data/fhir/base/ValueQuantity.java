@@ -1,4 +1,4 @@
-package com.bmi.clinicaltrial.data.fhir;
+package com.bmi.clinicaltrial.data.fhir.base;
 
 public class ValueQuantity
 {
