@@ -13,7 +13,8 @@ public class CustomAdvice
         INVALID_GENDER,
         INVALID_CLINICAL_STATUS,
         INVALID_CONDITION,
-        INVALID_ALLERGY
+        INVALID_ALLERGY,
+        INVALID_OBSERVATION,
         ;
     }
 

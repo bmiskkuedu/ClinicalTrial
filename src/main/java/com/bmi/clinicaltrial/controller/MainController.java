@@ -3,8 +3,10 @@ package com.bmi.clinicaltrial.controller;
 import com.bmi.clinicaltrial.data.Gender;
 import com.bmi.clinicaltrial.data.Patient;
 import com.bmi.clinicaltrial.parser.*;
+import com.bmi.clinicaltrial.parser.i.IMedicationStatement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,16 +22,17 @@ public class MainController
     final GenderParserImpl genderParser;
     final ObservationParserImpl observationParser;
     final ConditionParserImpl conditionParser;
+    final AllergyParserImpl allergyParser;
+    final MedicationStatementParserImpl medicationStatementParser;
 
-    public final AllergyParserImpl allergyParser;
-
-    public MainController(DateParserImpl dateParser, GenderParserImpl genderParser, ObservationParserImpl observationParser, ConditionParserImpl conditionParser, AllergyParserImpl allergyParser)
+    public MainController(DateParserImpl dateParser, GenderParserImpl genderParser, ObservationParserImpl observationParser, ConditionParserImpl conditionParser, AllergyParserImpl allergyParser, MedicationStatementParserImpl medicationStatementParser)
     {
         this.dateParser = dateParser;
         this.genderParser = genderParser;
         this.observationParser = observationParser;
         this.conditionParser = conditionParser;
         this.allergyParser = allergyParser;
+        this.medicationStatementParser = medicationStatementParser;
     }
 
     //private final static String testStr = "patient?birthdate=gt2000-01-01&birthdate=lt2010-01-01";
@@ -63,20 +66,18 @@ public class MainController
             /**
              *  검사 결과 체크    *****
              *  @see LOINC CODE
-             *  LOINC 코드가 없는(?) 경우, 텍스트 검색 기능 지원 필요???
-             *  언제, 어떠한 검사를 통해, 그 결과에 대한 수치
-             *  ex) 2019-07-23, CBC(피검사), 헤모글로빈 수치
              */
             @RequestParam(required = false, name="_has:Observation:patient:code") List<String> observation,
             @RequestParam(required = false, name="_has:Observation:patient:code:not") List<String> nObservation,
             @RequestParam(required = false, name="_has:Observation:patient:code-value-quantity") List<String> observationQuantity,
-            @RequestParam(required = false, name="_has:Observation:patient:code-value-quantity:not") List<String> notObservationQuantity,
             @RequestParam(required = false, name="_has:Observation:patient:code-value-date") List<String> observationCodeAndDate,
 
             /**
              *  약물 처방 체크    *****
              *  @see RXNORM CODE
-             *  TODO: 2019-07-24      처방 수량에 대한 내용 조건 추가해야 함 (어떤 약 몇 mg 이상 등)
+             *  TODO: 2019-07-24    처방 수량에 대한 내용 조건 추가해야 함 (어떤 약 몇 mg 이상 등)
+             *  TODO: 2019-07-29    FHIR 에서 Medicationstatement에 처방량에 대한 검색 PARAMETER가 없음 , chained ~  시 복잡
+             *                      DOSAGE 에서 검색해야 함
              */
             @RequestParam(required = false, name="_has:Medicationstatement:patient:code") List<String> medicationStatement,
             @RequestParam(required = false, name="_has:Medicationstatement:patient:code:not") List<String> nMedicationStatement,
@@ -89,9 +90,9 @@ public class MainController
              */
             @RequestParam(required = false, name="_has:AllergyIntolerance:patient:code") List<String> allergyintolerance,
             @RequestParam(required = false, name="_has:AllergyIntolerance:patient:code:not") List<String> nAllergyintolerance,
-            @RequestParam(required = false, name = "clinical-status") String clinicalStatus,
+            //@RequestParam(required = false, name = "clinical-status") String clinicalStatus,
 
-            @RequestParam(required = false, name = "value-quantity") String valueQuantity,
+
             //  변하지 않음, 항상 검색 결과의 count 만을 원함
             @RequestParam(required = false, name = "_summary", defaultValue = "count") String summary
             ) throws Exception
@@ -106,21 +107,16 @@ public class MainController
         patient.genderMap = genderParser.parser(gender, nGender);
 
         //  질병 체크
-        patient.conditionMap = conditionParser.codeParser(condition, nCondition);
+        patient.conditionMap = conditionParser.parser(condition, nCondition);
 
         //  검사 체크
-        //patient.observationMap = observationParser.codeParser(observation, nObservation);
+        patient.observationMap = observationParser.parser(observation, nObservation, observationQuantity, observationCodeAndDate);
 
-        // TODO: 2019-07-23
-        //  처방 체크
         //logger.info("medicationStatement : " + medicationStatement);
         //logger.info("exMedicationStatement : " + exMedicationStatement);
 
         //  알러지 체크
-        patient.allergyintoleranceMap = allergyParser.codeParser(allergyintolerance, nAllergyintolerance);
-
-        //  count 만 사용 확인
-        //logger.info("summary : " +  summary);
+        patient.allergyintoleranceMap = allergyParser.parser(allergyintolerance, nAllergyintolerance);
 
         logger.info("Patient : " + patient);
 

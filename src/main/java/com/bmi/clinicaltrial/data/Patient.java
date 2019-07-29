@@ -2,6 +2,7 @@ package com.bmi.clinicaltrial.data;
 
 import com.bmi.clinicaltrial.data.fhir.Allergy;
 import com.bmi.clinicaltrial.data.fhir.Condition;
+import com.bmi.clinicaltrial.data.fhir.Observation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,7 @@ public class Patient
     public Map<String, String> birthdateMap;
     public Map<String, String> genderMap;
     public Map<String, List<Condition>> conditionMap;
-    public Map<String, List<String>> observationMap;
+    public Map<String, List<Observation>> observationMap;
     public Map<String, String> medicationstatementMap;
     public Map<String, List<Allergy>> allergyintoleranceMap;
 

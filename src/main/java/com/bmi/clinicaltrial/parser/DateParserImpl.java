@@ -42,7 +42,6 @@ public class DateParserImpl implements IDate
                      *  2   :   date format (\\d{4}-\\d{2}-\\d{2})
                      *  ...
                      */
-                    // TODO: 이상한 값 체크 ex) ?
                     String key = dateMatcher.group(1).isEmpty() ? "eq" : dateMatcher.group(1);  //  prefix가 없는 경우 eq 취급
                     resultMap.put(key, dateMatcher.group(2));
                 }

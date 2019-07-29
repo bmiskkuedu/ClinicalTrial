@@ -22,7 +22,7 @@ public class AllergyParserImpl implements IAllergy
     private Logger logger = LogManager.getLogger();
 
     @Override
-    public Map<String, List<Allergy>> codeParser(List<String> allergyList, List<String> notAllergyList) throws Exception
+    public Map<String, List<Allergy>> parser(List<String> allergyList, List<String> notAllergyList) throws Exception
     {
         Map<String, List<Allergy>> allergyMap = new HashMap<>();
 

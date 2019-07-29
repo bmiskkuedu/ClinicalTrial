@@ -21,7 +21,7 @@ public class ConditionParserImpl implements ICondition
     private Logger logger = LogManager.getLogger();
 
     @Override
-    public Map<String, List<Condition>> codeParser(List<String> inStr, List<String> notStr) throws Exception
+    public Map<String, List<Condition>> parser(List<String> inStr, List<String> notStr) throws Exception
     {
         Map<String, List<Condition>> conditionMap = new HashMap<>();
 
