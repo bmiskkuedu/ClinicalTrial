@@ -1,8 +1,8 @@
 package com.bmi.clinicaltrial.parser;
 
-import com.bmi.clinicaltrial.data.Modifier;
-import com.bmi.clinicaltrial.data.fhir.Observation;
-import com.bmi.clinicaltrial.data.fhir.base.Code;
+import com.bmi.clinicaltrial.fhir.data.Modifier;
+import com.bmi.clinicaltrial.fhir.Observation;
+import com.bmi.clinicaltrial.fhir.data.Code;
 import com.bmi.clinicaltrial.exception.CustomAdvice;
 import com.bmi.clinicaltrial.exception.CustomException;
 import com.bmi.clinicaltrial.parser.i.IObservation;
@@ -52,11 +52,6 @@ public class ObservationParserImpl implements IObservation
             for(String s : list)
             {
                 String[] temp = s.split(OBSERVATION_REGEX);
-
-                for(int i = 0; i < temp.length; i++)
-                {
-                    logger.info("checkCodeAndQuantity : " + s + " :: " + temp[i]);
-                }
 
                 Observation observation = new Observation();
                 observation.code.coding.add(Utils.getCoding(temp[0], CustomAdvice.ErrorCode.INVALID_OBSERVATION));

@@ -1,8 +1,8 @@
 package com.bmi.clinicaltrial.parser;
 
-import com.bmi.clinicaltrial.data.Modifier;
-import com.bmi.clinicaltrial.data.fhir.Allergy;
-import com.bmi.clinicaltrial.data.fhir.base.Code;
+import com.bmi.clinicaltrial.fhir.data.Modifier;
+import com.bmi.clinicaltrial.fhir.Allergy;
+import com.bmi.clinicaltrial.fhir.data.Code;
 import com.bmi.clinicaltrial.exception.CustomException;
 import com.bmi.clinicaltrial.parser.i.IAllergy;
 import org.apache.logging.log4j.LogManager;

@@ -15,6 +15,7 @@ public class CustomAdvice
         INVALID_CONDITION,
         INVALID_ALLERGY,
         INVALID_OBSERVATION,
+        INVALID_MEDICATIONSTATEMENT,
         ;
     }
 

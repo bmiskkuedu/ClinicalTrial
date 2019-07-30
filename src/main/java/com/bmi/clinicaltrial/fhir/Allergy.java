@@ -1,8 +1,8 @@
-package com.bmi.clinicaltrial.data.fhir;
+package com.bmi.clinicaltrial.fhir;
 
-import com.bmi.clinicaltrial.data.fhir.base.Code;
+import com.bmi.clinicaltrial.fhir.data.Code;
 
-public class Condition
+public class Allergy
 {
     private Code code;
 
@@ -19,8 +19,8 @@ public class Condition
     @Override
     public String toString()
     {
-        return "Condition{" +
-                "code=" + code +
+        return "Allergy{" +
+                code +
                 '}';
     }
 }

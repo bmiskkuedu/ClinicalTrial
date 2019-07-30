@@ -1,6 +1,6 @@
 package com.bmi.clinicaltrial.parser.i;
 
-import com.bmi.clinicaltrial.data.fhir.Allergy;
+import com.bmi.clinicaltrial.fhir.Allergy;
 
 import java.util.List;
 import java.util.Map;

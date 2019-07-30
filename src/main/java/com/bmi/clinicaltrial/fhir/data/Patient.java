@@ -1,8 +1,9 @@
-package com.bmi.clinicaltrial.data;
+package com.bmi.clinicaltrial.fhir.data;
 
-import com.bmi.clinicaltrial.data.fhir.Allergy;
-import com.bmi.clinicaltrial.data.fhir.Condition;
-import com.bmi.clinicaltrial.data.fhir.Observation;
+import com.bmi.clinicaltrial.fhir.Allergy;
+import com.bmi.clinicaltrial.fhir.Condition;
+import com.bmi.clinicaltrial.fhir.MedicationStatement;
+import com.bmi.clinicaltrial.fhir.Observation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ public class Patient
     public Map<String, String> genderMap;
     public Map<String, List<Condition>> conditionMap;
     public Map<String, List<Observation>> observationMap;
-    public Map<String, String> medicationstatementMap;
+    public Map<String, List<MedicationStatement>> medicationstatementMap;
     public Map<String, List<Allergy>> allergyintoleranceMap;
 
 

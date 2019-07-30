@@ -1,8 +1,8 @@
 package com.bmi.clinicaltrial.parser;
 
-import com.bmi.clinicaltrial.data.Modifier;
-import com.bmi.clinicaltrial.data.fhir.Condition;
-import com.bmi.clinicaltrial.data.fhir.base.Code;
+import com.bmi.clinicaltrial.fhir.data.Modifier;
+import com.bmi.clinicaltrial.fhir.Condition;
+import com.bmi.clinicaltrial.fhir.data.Code;
 import com.bmi.clinicaltrial.exception.CustomAdvice;
 import com.bmi.clinicaltrial.exception.CustomException;
 import com.bmi.clinicaltrial.parser.i.ICondition;
@@ -44,7 +44,7 @@ public class ConditionParserImpl implements ICondition
                 code.coding.add(Utils.getCoding(s, CustomAdvice.ErrorCode.INVALID_CONDITION));
             }
 
-            condition.setCode(code);
+            condition.code = code;
             conditionList.add(condition);
             conditionMap.put(status.getModifier(), conditionList);
         }

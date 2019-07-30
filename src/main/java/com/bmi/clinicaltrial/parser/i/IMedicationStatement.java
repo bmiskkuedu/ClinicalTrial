@@ -1,8 +1,12 @@
 package com.bmi.clinicaltrial.parser.i;
 
 import com.bmi.clinicaltrial.exception.CustomException;
+import com.bmi.clinicaltrial.fhir.MedicationStatement;
+
+import java.util.List;
+import java.util.Map;
 
 public interface IMedicationStatement extends Parser
 {
-    void parser() throws CustomException;
+    Map<String, List<MedicationStatement>> parser(List<String> medicationStatement, List<String> notMedicationStatement ) throws CustomException;
 }

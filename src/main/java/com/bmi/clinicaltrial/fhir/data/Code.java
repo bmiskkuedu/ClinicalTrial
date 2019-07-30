@@ -1,4 +1,4 @@
-package com.bmi.clinicaltrial.data.fhir.base;
+package com.bmi.clinicaltrial.fhir.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ public class Code
     public String toString()
     {
         return "Code{" +
-                "coding=" + coding +
-                '}';
+                coding +
+                "}";
     }
 }

@@ -1,12 +1,10 @@
 package com.bmi.clinicaltrial.controller;
 
-import com.bmi.clinicaltrial.data.Gender;
-import com.bmi.clinicaltrial.data.Patient;
+import com.bmi.clinicaltrial.fhir.data.Gender;
+import com.bmi.clinicaltrial.fhir.data.Patient;
 import com.bmi.clinicaltrial.parser.*;
-import com.bmi.clinicaltrial.parser.i.IMedicationStatement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,13 +72,12 @@ public class MainController
 
             /**
              *  약물 처방 체크    *****
-             *  @see RXNORM CODE
-             *  TODO: 2019-07-24    처방 수량에 대한 내용 조건 추가해야 함 (어떤 약 몇 mg 이상 등)
+             *  @see RXNORM CODE             *
              *  TODO: 2019-07-29    FHIR 에서 Medicationstatement에 처방량에 대한 검색 PARAMETER가 없음 , chained ~  시 복잡
              *                      DOSAGE 에서 검색해야 함
              */
             @RequestParam(required = false, name="_has:Medicationstatement:patient:code") List<String> medicationStatement,
-            @RequestParam(required = false, name="_has:Medicationstatement:patient:code:not") List<String> nMedicationStatement,
+            @RequestParam(required = false, name="_has:Medicationstatement:patient:code:not") List<String> notMedicationStatement,
 
             /**
              *  알러지 체크  ***
@@ -112,8 +109,8 @@ public class MainController
         //  검사 체크
         patient.observationMap = observationParser.parser(observation, nObservation, observationQuantity, observationCodeAndDate);
 
-        //logger.info("medicationStatement : " + medicationStatement);
-        //logger.info("exMedicationStatement : " + exMedicationStatement);
+        //  처방 체크
+        patient.medicationstatementMap = medicationStatementParser.parser(medicationStatement, notMedicationStatement);
 
         //  알러지 체크
         patient.allergyintoleranceMap = allergyParser.parser(allergyintolerance, nAllergyintolerance);

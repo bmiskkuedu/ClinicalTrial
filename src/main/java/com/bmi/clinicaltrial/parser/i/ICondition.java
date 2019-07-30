@@ -1,6 +1,6 @@
 package com.bmi.clinicaltrial.parser.i;
 
-import com.bmi.clinicaltrial.data.fhir.Condition;
+import com.bmi.clinicaltrial.fhir.Condition;
 
 import java.util.List;
 import java.util.Map;

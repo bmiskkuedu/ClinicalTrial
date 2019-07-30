@@ -1,7 +1,6 @@
-package com.bmi.clinicaltrial.data;
+package com.bmi.clinicaltrial.fhir.data;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 public enum ClinicalStatus
 {

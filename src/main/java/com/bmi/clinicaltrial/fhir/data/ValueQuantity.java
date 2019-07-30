@@ -1,6 +1,4 @@
-package com.bmi.clinicaltrial.data.fhir.base;
-
-import com.bmi.clinicaltrial.data.Prefix;
+package com.bmi.clinicaltrial.fhir.data;
 
 public class ValueQuantity
 {

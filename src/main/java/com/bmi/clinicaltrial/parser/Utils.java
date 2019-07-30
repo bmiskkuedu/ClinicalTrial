@@ -1,10 +1,10 @@
 package com.bmi.clinicaltrial.parser;
 
-import com.bmi.clinicaltrial.data.Modifier;
-import com.bmi.clinicaltrial.data.Prefix;
-import com.bmi.clinicaltrial.data.fhir.base.Coding;
-import com.bmi.clinicaltrial.data.fhir.base.Issued;
-import com.bmi.clinicaltrial.data.fhir.base.ValueQuantity;
+import com.bmi.clinicaltrial.fhir.data.Modifier;
+import com.bmi.clinicaltrial.fhir.data.Prefix;
+import com.bmi.clinicaltrial.fhir.data.Coding;
+import com.bmi.clinicaltrial.fhir.data.Issued;
+import com.bmi.clinicaltrial.fhir.data.ValueQuantity;
 import com.bmi.clinicaltrial.exception.CustomAdvice;
 import com.bmi.clinicaltrial.exception.CustomException;
 import org.apache.logging.log4j.LogManager;
@@ -61,11 +61,6 @@ public class Utils
     static ValueQuantity getValueQuantity(String str, CustomAdvice.ErrorCode errorCode) throws CustomException
     {
         String[] splitStr = str.split("\\|");
-
-        for(int i = 0; i < splitStr.length; i++)
-        {
-            logger.info("splitStr : " + i + " : " + splitStr[i]);
-        }
 
         if (splitStr.length != 3)
         {
