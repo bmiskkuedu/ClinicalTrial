@@ -33,14 +33,6 @@ public class MainController
         this.medicationStatementParser = medicationStatementParser;
     }
 
-    //private final static String testStr = "patient?birthdate=gt2000-01-01&birthdate=lt2010-01-01";
-
-    @GetMapping("/")
-    public String main()
-    {
-        return "Hello World!";
-    }
-
     @GetMapping("/Patient")
     @ResponseBody
     public int findNumberOfPatient(
@@ -73,7 +65,7 @@ public class MainController
             /**
              *  약물 처방 체크    *****
              *  @see RXNORM CODE             *
-             *  TODO: 2019-07-29    FHIR 에서 Medicationstatement에 처방량에 대한 검색 PARAMETER가 없음 , chained ~  시 복잡
+             *  CHECK: 2019-07-29    FHIR 에서 Medicationstatement에 처방량에 대한 검색 PARAMETER가 없음 , chained ~  시 복잡
              *                      DOSAGE 에서 검색해야 함
              */
             @RequestParam(required = false, name="_has:Medicationstatement:patient:code") List<String> medicationStatement,
@@ -82,8 +74,8 @@ public class MainController
             /**
              *  알러지 체크  ***
              *  @see SNOMED Clinical Terms Code
-             *  check : 알러지 포함 과 미포함 사용 시 clinical-status 사용 하면 충돌 발생,
-             *  check : 어느 것에 대한 status를 조회하는 것인지 알 수 없음
+             *  CHECK : 알러지 포함 과 미포함 사용 시 clinical-status 사용 하면 충돌 발생,
+             *  CHECK : 어느 것에 대한 status를 조회하는 것인지 알 수 없음
              */
             @RequestParam(required = false, name="_has:AllergyIntolerance:patient:code") List<String> allergyintolerance,
             @RequestParam(required = false, name="_has:AllergyIntolerance:patient:code:not") List<String> nAllergyintolerance,
@@ -117,13 +109,6 @@ public class MainController
 
         logger.info("Patient : " + patient);
 
-        return 0;
-    }
-
-    @GetMapping("/test")
-    public int test(@RequestParam Map<String, String> map)
-    {
-        logger.info(map.toString());
         return 0;
     }
 }
