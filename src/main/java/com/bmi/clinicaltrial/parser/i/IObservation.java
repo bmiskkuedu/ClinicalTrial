@@ -1,6 +1,6 @@
 package com.bmi.clinicaltrial.parser.i;
 
-import com.bmi.clinicaltrial.fhir.Observation;
+import com.bmi.clinicaltrial.fhir.data.Observation;
 import com.bmi.clinicaltrial.exception.CustomException;
 
 import java.util.List;

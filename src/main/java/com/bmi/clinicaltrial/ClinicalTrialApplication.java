@@ -1,5 +1,6 @@
 package com.bmi.clinicaltrial;
 
+import com.bmi.clinicaltrial.utils.LoadJson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,7 @@ public class ClinicalTrialApplication {
     public static void main(String[] args) {
         SpringApplication.run(ClinicalTrialApplication.class, args);
         logger.info("ClinicalTrial Application start");
-    }
 
+        LoadJson loadJson = new LoadJson();
+    }
 }

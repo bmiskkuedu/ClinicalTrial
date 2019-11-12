@@ -1,10 +1,5 @@
 package com.bmi.clinicaltrial.fhir.data;
 
-import com.bmi.clinicaltrial.fhir.Allergy;
-import com.bmi.clinicaltrial.fhir.Condition;
-import com.bmi.clinicaltrial.fhir.MedicationStatement;
-import com.bmi.clinicaltrial.fhir.Observation;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

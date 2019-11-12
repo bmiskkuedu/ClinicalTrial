@@ -1,4 +1,4 @@
-package com.bmi.clinicaltrial.fhir;
+package com.bmi.clinicaltrial.fhir.data;
 
 import com.bmi.clinicaltrial.fhir.data.Code;
 

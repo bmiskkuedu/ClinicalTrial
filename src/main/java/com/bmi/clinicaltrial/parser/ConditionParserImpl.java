@@ -1,7 +1,7 @@
 package com.bmi.clinicaltrial.parser;
 
 import com.bmi.clinicaltrial.fhir.data.Modifier;
-import com.bmi.clinicaltrial.fhir.Condition;
+import com.bmi.clinicaltrial.fhir.data.Condition;
 import com.bmi.clinicaltrial.fhir.data.Code;
 import com.bmi.clinicaltrial.exception.CustomAdvice;
 import com.bmi.clinicaltrial.exception.CustomException;

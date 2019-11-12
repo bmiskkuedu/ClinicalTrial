@@ -1,7 +1,7 @@
 package com.bmi.clinicaltrial.parser.i;
 
 import com.bmi.clinicaltrial.exception.CustomException;
-import com.bmi.clinicaltrial.fhir.MedicationStatement;
+import com.bmi.clinicaltrial.fhir.data.MedicationStatement;
 
 import java.util.List;
 import java.util.Map;
