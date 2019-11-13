@@ -2,11 +2,17 @@ package com.bmi.clinicaltrial.controller;
 
 import com.bmi.clinicaltrial.fhir.data.Gender;
 import com.bmi.clinicaltrial.fhir.data.Patient;
+import com.bmi.clinicaltrial.fhir.jsondata.Entry;
 import com.bmi.clinicaltrial.parser.*;
+import com.bmi.clinicaltrial.service.SearchImpl;
+import com.bmi.clinicaltrial.utils.LoadJson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,14 +22,16 @@ public class MainController
 {
     private Logger logger = LogManager.getLogger();
 
-    final DateParserImpl dateParser;
-    final GenderParserImpl genderParser;
-    final ObservationParserImpl observationParser;
-    final ConditionParserImpl conditionParser;
-    final AllergyParserImpl allergyParser;
-    final MedicationStatementParserImpl medicationStatementParser;
+    private final DateParserImpl dateParser;
+    private final GenderParserImpl genderParser;
+    private final ObservationParserImpl observationParser;
+    private final ConditionParserImpl conditionParser;
+    private final AllergyParserImpl allergyParser;
+    private final MedicationStatementParserImpl medicationStatementParser;
 
-    public MainController(DateParserImpl dateParser, GenderParserImpl genderParser, ObservationParserImpl observationParser, ConditionParserImpl conditionParser, AllergyParserImpl allergyParser, MedicationStatementParserImpl medicationStatementParser)
+    private final SearchImpl search;
+
+    public MainController(DateParserImpl dateParser, GenderParserImpl genderParser, ObservationParserImpl observationParser, ConditionParserImpl conditionParser, AllergyParserImpl allergyParser, MedicationStatementParserImpl medicationStatementParser, SearchImpl search)
     {
         this.dateParser = dateParser;
         this.genderParser = genderParser;
@@ -31,6 +39,9 @@ public class MainController
         this.conditionParser = conditionParser;
         this.allergyParser = allergyParser;
         this.medicationStatementParser = medicationStatementParser;
+
+
+        this.search = search;
     }
 
     @GetMapping("/Patient")
@@ -109,6 +120,8 @@ public class MainController
 
         logger.info("Patient : " + patient);
 
-        return 0;
+        int result = search.search(patient);
+
+        return result;
     }
 }

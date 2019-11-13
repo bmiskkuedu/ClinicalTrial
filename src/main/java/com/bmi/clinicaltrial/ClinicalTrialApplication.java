@@ -13,7 +13,5 @@ public class ClinicalTrialApplication {
     public static void main(String[] args) {
         SpringApplication.run(ClinicalTrialApplication.class, args);
         logger.info("ClinicalTrial Application start");
-
-        LoadJson loadJson = new LoadJson();
     }
 }

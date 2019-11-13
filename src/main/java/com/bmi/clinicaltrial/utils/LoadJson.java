@@ -1,12 +1,9 @@
 package com.bmi.clinicaltrial.utils;
 
 
-import com.bmi.clinicaltrial.fhir.data.Code;
 import com.bmi.clinicaltrial.fhir.data.Coding;
-import com.bmi.clinicaltrial.fhir.data.Gender;
 import com.bmi.clinicaltrial.fhir.data.ValueQuantity;
 import com.bmi.clinicaltrial.fhir.jsondata.*;
-import com.bmi.clinicaltrial.parser.GenderParserImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -26,6 +23,7 @@ import java.util.stream.Collectors;
 public class LoadJson
 {
     private Logger logger = LogManager.getLogger();
+    private List<Entry> allSampleData = new ArrayList<Entry>();
 
     public LoadJson()
     {
@@ -40,9 +38,6 @@ public class LoadJson
 
             JSONParser parser = new JSONParser();
 
-            List<Entry> allSampleData = new ArrayList<Entry>();
-
-
             for (int i = 0; i < fileList.size(); i++)
             {
                 Entry entry = new Entry();
@@ -51,17 +46,17 @@ public class LoadJson
                 FileReader reader = new FileReader(fileList.get(i).getAbsoluteFile());
 
                 Object json = parser.parse(reader);
-                JSONObject jsonObject = (JSONObject)json;
+                JSONObject jsonObject = (JSONObject) json;
 
-                JSONArray entryList = (JSONArray)jsonObject.get("entry");
+                JSONArray entryList = (JSONArray) jsonObject.get("entry");
                 Iterator iterator = entryList.iterator();
 
                 //logger.info(i + " ::: " + fileList.get(i).getAbsoluteFile());
-                while(iterator.hasNext())
+                while (iterator.hasNext())
                 {
-                    JSONObject item = (JSONObject)iterator.next();
-                    JSONObject resource = (JSONObject)item.get("resource");
-                    String type = (String)resource.get("resourceType");
+                    JSONObject item = (JSONObject) iterator.next();
+                    JSONObject resource = (JSONObject) item.get("resource");
+                    String type = (String) resource.get("resourceType");
 
                     switch (type)
                     {
@@ -71,6 +66,9 @@ public class LoadJson
                         case "Observation":
                             entry.observations.add(parserObservation(resource));
                             break;
+                        case "Condition":
+                            entry.conditions.add(parserCondition(resource));
+                            break;
                         case "MedicationRequest":
                             entry.medicationRequests.add(parserMedicationRequest(resource));
                             break;
@@ -79,7 +77,7 @@ public class LoadJson
                             break;
                     }
                 }
-                //logger.info("entry : " + entry);
+                //logger.info(entry.sizeToString());
                 allSampleData.add(entry);
             }
 
@@ -95,9 +93,9 @@ public class LoadJson
     private Patient parserPatient(JSONObject resource)
     {
         Patient patient = new Patient();
-        patient.id = (String)resource.get("id");
-        patient.gender =  (String)resource.get("gender");
-        patient.birthDate = (String)resource.get("birthDate");
+        patient.id = (String) resource.get("id");
+        patient.gender = (String) resource.get("gender");
+        patient.birthDate = (String) resource.get("birthDate");
 
         return patient;
     }
@@ -106,10 +104,10 @@ public class LoadJson
     {
         Observation observation = new Observation();
 
-        observation.issued.issued = (String)resource.get("issued");
+        observation.issued.issued = (String) resource.get("issued");
 
-        JSONObject codeObject = (JSONObject)resource.get("code");
-        JSONArray codeArray = (JSONArray)codeObject.get("coding");
+        JSONObject codeObject = (JSONObject) resource.get("code");
+        JSONArray codeArray = (JSONArray) codeObject.get("coding");
 
         for (Object o : codeArray)
         {
@@ -121,8 +119,8 @@ public class LoadJson
             observation.code.coding.add(coding);
         }
 
-        JSONObject valueObject = (JSONObject)resource.getOrDefault("valueQuantity", null);
-        if(valueObject != null)
+        JSONObject valueObject = (JSONObject) resource.getOrDefault("valueQuantity", null);
+        if (valueObject != null)
         {
             ValueQuantity valueQuantity = new ValueQuantity();
             valueQuantity.code = (String) valueObject.get("code");
@@ -135,12 +133,30 @@ public class LoadJson
         return observation;
     }
 
+    private Condition parserCondition(JSONObject resource)
+    {
+        Condition condition = new Condition();
+        JSONObject codeObject = (JSONObject) resource.get("code");
+        JSONArray codeArray = (JSONArray) codeObject.get("coding");
+
+        for (Object o : codeArray)
+        {
+            JSONObject item = (JSONObject) o;
+            Coding coding = new Coding();
+            coding.code = (String) item.get("code");
+            coding.system = (String) item.get("system");
+            coding.display = (String) item.get("display");
+            condition.code.coding.add(coding);
+        }
+        return condition;
+    }
+
     private MedicationRequest parserMedicationRequest(JSONObject resource)
     {
         MedicationRequest medicationRequest = new MedicationRequest();
-        medicationRequest.authoredOn= (String)resource.getOrDefault("authoredOn", "");
-        JSONObject medicationCodeableConceptOjbect = (JSONObject)resource.get("medicationCodeableConcept");
-        JSONArray codingArray = (JSONArray)medicationCodeableConceptOjbect.get("coding");
+        medicationRequest.authoredOn = (String) resource.getOrDefault("authoredOn", "");
+        JSONObject medicationCodeableConceptOjbect = (JSONObject) resource.get("medicationCodeableConcept");
+        JSONArray codingArray = (JSONArray) medicationCodeableConceptOjbect.get("coding");
 
         for (Object o : codingArray)
         {
@@ -160,8 +176,8 @@ public class LoadJson
     {
         AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
 
-        JSONObject codeObject = (JSONObject)resource.get("code");
-        JSONArray codeArray = (JSONArray)codeObject.get("coding");
+        JSONObject codeObject = (JSONObject) resource.get("code");
+        JSONArray codeArray = (JSONArray) codeObject.get("coding");
 
         for (Object o : codeArray)
         {
@@ -173,6 +189,11 @@ public class LoadJson
             allergyIntolerance.code.coding.add(coding);
         }
         return allergyIntolerance;
+    }
+
+    public List<Entry> getAllSampleData()
+    {
+        return allSampleData;
     }
 }
 
