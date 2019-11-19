@@ -1,7 +1,5 @@
 package com.bmi.clinicaltrial.fhir.jsondata;
 
-import com.bmi.clinicaltrial.fhir.data.Gender;
-
 public class Patient
 {
     public String id = "";

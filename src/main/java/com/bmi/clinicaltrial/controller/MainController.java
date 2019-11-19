@@ -118,7 +118,7 @@ public class MainController
         //  알러지 체크
         patient.allergyintoleranceMap = allergyParser.parser(allergyintolerance, nAllergyintolerance);
 
-        logger.info("Patient : " + patient);
+        //logger.info("Patient : " + patient);
 
         int result = search.search(patient);
 
