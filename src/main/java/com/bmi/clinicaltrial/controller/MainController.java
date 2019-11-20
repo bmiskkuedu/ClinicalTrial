@@ -2,19 +2,13 @@ package com.bmi.clinicaltrial.controller;
 
 import com.bmi.clinicaltrial.fhir.data.Gender;
 import com.bmi.clinicaltrial.fhir.data.Patient;
-import com.bmi.clinicaltrial.fhir.jsondata.Entry;
 import com.bmi.clinicaltrial.parser.*;
 import com.bmi.clinicaltrial.service.SearchImpl;
-import com.bmi.clinicaltrial.utils.LoadJson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -79,8 +73,8 @@ public class MainController
              *  CHECK: 2019-07-29    FHIR 에서 Medicationstatement에 처방량에 대한 검색 PARAMETER가 없음 , chained ~  시 복잡
              *                      DOSAGE 에서 검색해야 함
              */
-            @RequestParam(required = false, name="_has:Medicationstatement:patient:code") List<String> medicationStatement,
-            @RequestParam(required = false, name="_has:Medicationstatement:patient:code:not") List<String> notMedicationStatement,
+            @RequestParam(required = false, name="_has:MedicationRequest:patient:code") List<String> medicationStatement,
+            @RequestParam(required = false, name="_has:MedicationsRequest:patient:code:not") List<String> notMedicationStatement,
 
             /**
              *  알러지 체크  ***
@@ -113,7 +107,7 @@ public class MainController
         patient.observationMap = observationParser.parser(observation, nObservation, observationQuantity, observationCodeAndDate);
 
         //  처방 체크
-        patient.medicationstatementMap = medicationStatementParser.parser(medicationStatement, notMedicationStatement);
+        patient.medicationRequestMap = medicationStatementParser.parser(medicationStatement, notMedicationStatement);
 
         //  알러지 체크
         patient.allergyintoleranceMap = allergyParser.parser(allergyintolerance, nAllergyintolerance);

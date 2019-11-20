@@ -10,7 +10,7 @@ public class Patient
     public Map<String, String> genderMap;
     public Map<String, List<Condition>> conditionMap;
     public Map<String, List<Observation>> observationMap;
-    public Map<String, List<MedicationStatement>> medicationstatementMap;
+    public Map<String, List<MedicationStatement>> medicationRequestMap;
     public Map<String, List<Allergy>> allergyintoleranceMap;
 
 
@@ -19,7 +19,7 @@ public class Patient
         birthdateMap = new HashMap<>();
         genderMap = new HashMap<>();
         observationMap = new HashMap<>();
-        medicationstatementMap = new HashMap<>();
+        medicationRequestMap = new HashMap<>();
         allergyintoleranceMap = new HashMap<>();
     }
 
@@ -31,7 +31,7 @@ public class Patient
                 ", genderMap=" + genderMap +
                 ", conditionMap=" + conditionMap +
                 ", observationMap=" + observationMap +
-                ", medicationstatementMap=" + medicationstatementMap +
+                ", medicationRequestMap=" + medicationRequestMap +
                 ", allergyintoleranceMap=" + allergyintoleranceMap +
                 '}';
     }

@@ -27,7 +27,7 @@ public class ObservationParserImpl implements IObservation
     {
         Map<String, List<Observation>> observationMap = new HashMap<>();
 
-               //  1 - _has:observation:patient:code
+        //  1 - _has:observation:patient:code
         //  특정 코드만 검색 한 경우
         checkCode(observation, observationMap, Modifier.eq);
         //  2 - _has:observation:patient:code:not

@@ -4,17 +4,7 @@ import com.bmi.clinicaltrial.fhir.data.Code;
 
 public class Allergy
 {
-    private Code code;
-
-    public Code getCode()
-    {
-        return code;
-    }
-
-    public void setCode(Code code)
-    {
-        this.code = code;
-    }
+    public Code code = new Code();
 
     @Override
     public String toString()

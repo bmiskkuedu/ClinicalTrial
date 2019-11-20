@@ -46,7 +46,7 @@ public class AllergyParserImpl implements IAllergy
                 code.coding.add(Utils.getCoding(s, INVALID_ALLERGY));
             }
 
-            allergy.setCode(code);
+            allergy.code = code;
             allergyList.add(allergy);
             conditionMap.put(status.getModifier(), allergyList);
         }
