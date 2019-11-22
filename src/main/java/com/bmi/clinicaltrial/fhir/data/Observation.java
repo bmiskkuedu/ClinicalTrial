@@ -9,7 +9,7 @@ public class Observation extends Resource
 {
     public Code code = new Code();
 
-    public ValueQuantity valueQuantity = new ValueQuantity();
+    public ValueQuantity valueQuantity;
 
     public Issued issued;
 

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.awt.event.WindowFocusListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,21 +45,14 @@ public class SearchImpl implements ISearch
         List<Entry> result = new ArrayList<>();
 
         result = checkGender(patient);  //  1. gender check
-        //logger.info("checkGender : " + result.size());
         result = checkBirthdate(result, patient);   //  2. birthdate check
-        //logger.info("checkBirthdate : " + result.size());
         result = checkCondition(result, patient);   //  3. condition check
-        //logger.info("checkCondition : " + result.size());
         result = checkObservation(result, patient); //  4. observation check
-        logger.info("checkObservation : " + result.size());
         result = checkMedicationRequest(result, patient);   //  5. medicationrequest check
-        //logger.info("checkMedicationRequest : " + result.size());
         result = checkAllergyIntolerance(result, patient);  //  6. allergyintolerance check
-        //logger.info("checkAllergyIntolerance : " + result.size());
-
         logger.info("result : " + result.size());
 
-        return 0;
+        return result.size();
     }
 
     /**
@@ -199,49 +193,32 @@ public class SearchImpl implements ISearch
         {
             List<Entry> tempResult = new ArrayList<>();
 
-            List<Coding> eqList = new ArrayList<>();
-            List<Coding> notList = new ArrayList<>();
-            List<Coding> gtList = new ArrayList<>();
-            List<Coding> ltList = new ArrayList<>();
-            List<Coding> geList = new ArrayList<>();
-            List<Coding> leList = new ArrayList<>();
+            Iterator iterator = patient.observationMap.keySet().iterator();
 
-            createConditionList(patient, eqList, notList, gtList, ltList, geList, leList);
+            List<Observation> eqList = new ArrayList<>();
+            List<Observation> notList = new ArrayList<>();
 
-            logger.info(eqList);
-            logger.info(notList);
-            logger.info(gtList);
-            logger.info(ltList);
-            logger.info(geList);
-            logger.info(leList);
-
-            for (Entry e : beforeResult)    //  전체 환자 리스트 순회
+            //  eq or not 같이 사용 가능
+            if(patient.observationMap.containsKey(Modifier.eq.getModifier()))
             {
-                for (com.bmi.clinicaltrial.fhir.jsondata.Observation o : e.observations)    //  환자의 observation 순회
-                {
-                    for (Coding c : o.code.coding)  //  observation의 coding 순회
-                    {
-                        eqList.forEach(it-> {
-                            if(it.code.equals(c.code))
-                            {
-                                if(!tempResult.contains(e))
-                                {
-                                    tempResult.add(e);
-                                }
-                            }
-                        });
-                        notList.forEach(it->{
-                            if (it.code.equals(c.code))
-                            {
-                                tempResult.remove(e);
-                            }
-                        });
-                    }
-                    o.valueQuantity.code
-                }
+                tempResult = extractObservation(beforeResult, Modifier.eq.getModifier(), patient);  //  일치하는 조건 검색
             }
-            logger.info("tempResult : " + tempResult.size() + " /// " + tempResult);
-            return tempResult;
+            if(patient.observationMap.containsKey(Modifier.not.getModifier()))
+            {
+                tempResult = extractObservation(tempResult, Modifier.not.getModifier(), patient);   //  일치하는 조건 삭제
+            }
+            //  code-value-quantity 따로 사용
+            if(patient.observationMap.containsKey(Modifier.value.getModifier()))
+            {
+                tempResult = extractObservationValue(beforeResult, patient);          //  일치하는 검사 결과 조회
+            }
+            //  code-value-date 따로 사용
+            if(patient.observationMap.containsKey(Modifier.date.getModifier()))
+            {
+
+            }
+
+            logger.info("checkObservation : " + tempResult.size() + " :: " + tempResult);
         }
 
         return beforeResult;
@@ -356,39 +333,104 @@ public class SearchImpl implements ISearch
         }
     }
 
-    private void createConditionList(Patient patient,  List<Coding> eqList, List<Coding> notList, List<Coding> gtList, List<Coding> ltList, List<Coding> geList, List<Coding> leList)
+    /**
+     *  Observation에서 일치/불일치 Code의 환자정보를 검색 함
+     * @param beforeResult  이전의 검색 결과
+     * @param key   eq or not
+     * @param patient   검색하고자 하는 조건
+     * @return
+     */
+    private List<Entry> extractObservation(List<Entry> beforeResult, String key, Patient patient)
     {
-        Iterator iterator = patient.observationMap.keySet().iterator();
+        List<Entry> tempResult = new ArrayList<>();
+        List<Observation> observationList = patient.observationMap.get(key);
 
-        while (iterator.hasNext())
+        observationList.forEach(it->
         {
-            String key = (String)iterator.next();
-            List<Observation> cObservation = (List<Observation>)patient.observationMap.get(key);
-            logger.info(key + " ::: " + patient.observationMap.get(key));
-            if (key.equals(Modifier.eq.getModifier()))
+            if(key.equals(Modifier.eq.getModifier()))
             {
-                cObservation.forEach(cit -> eqList.addAll(cit.code.coding));
+                beforeResult.forEach(it2-> it2.observations.forEach(it3->it3.code.coding.forEach(it4->
+                   {
+                       it.code.coding.forEach(it5->{
+                                                  if (it5.code.equals(it4.code))
+                                                  {
+                                                      if(!tempResult.contains(it2))
+                                                      {
+                                                          tempResult.add(it2);
+                                                      }
+                                                  }
+                                              });
+
+                   })));
             }
-            if (key.equals(Modifier.not.getModifier()))
+            if(key.equals(Modifier.not.getModifier()))
             {
-                cObservation.forEach(cit -> notList.addAll(cit.code.coding));
+                beforeResult.forEach(it2-> it2.observations.forEach(it3->it3.code.coding.forEach(it4->
+                   {
+                       it.code.coding.forEach(it5 ->{
+                           if(it5.code.equals(it4.code))
+                           {
+                               tempResult.remove(it2);
+                           }
+                       });
+                   })));
             }
-            if (key.equals(Prefix.gt.getPrefix()))
-            {
-                cObservation.forEach(cit -> gtList.addAll(cit.code.coding));
-            }
-            if (key.equals(Prefix.lt.getPrefix()))
-            {
-                cObservation.forEach(cit -> ltList.addAll(cit.code.coding));
-            }
-            if (key.equals(Prefix.ge.getPrefix()))
-            {
-                cObservation.forEach(cit -> geList.addAll(cit.code.coding));
-            }
-            if (key.equals(Prefix.le.getPrefix()))
-            {
-                cObservation.forEach(cit -> leList.addAll(cit.code.coding));
-            }
-        }
+        });
+
+        return tempResult;
+    }
+
+    private List<Entry> extractObservationValue(List<Entry> beforeResult, Patient patient )
+    {
+
+        List<Entry> tempResult = new ArrayList<>();
+        List<Observation> observationList = patient.observationMap.get(Modifier.value.getModifier());
+
+        beforeResult.forEach(it->{
+            it.observations.forEach(it2->{
+                it2.code.coding.forEach(it3->{
+                    observationList.forEach(it4->{
+                        it4.code.coding.forEach(it5->{
+                        if (it5.system.equals(it3.system) && it5.code.equals(it3.code))
+                        {
+                            //  it4 : 검색 조건, it2 : 환자 정보
+                            if(observationList.size() > 1)
+                            {
+                                //  검색 조건이 여러개
+                            }
+                            else
+                            {
+                                //  검색 조건이 1개
+                                if((it4.valueQuantity.prefix.getPrefix().equals(Prefix.ge.getPrefix())
+                                        && Double.parseDouble(it4.valueQuantity.value) <= Double.parseDouble(it2.valueQuantity.value))
+                                        || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.gt.getPrefix())
+                                        && Double.parseDouble(it4.valueQuantity.value) < Double.parseDouble(it2.valueQuantity.value))
+                                        || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.le.getPrefix())
+                                        && Double.parseDouble(it4.valueQuantity.value) >= Double.parseDouble(it2.valueQuantity.value))
+                                        || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.lt.getPrefix())
+                                        && Double.parseDouble(it4.valueQuantity.value) > Double.parseDouble(it2.valueQuantity.value)))
+                                {
+
+                                    if(!tempResult.contains(it))
+                                    {
+                                        tempResult.add(it);
+                                    }
+                                }
+                                else
+                                {
+                                    tempResult.remove(it);
+                                }
+                            }
+                        }});
+                    });
+                });
+            });
+        });
+        return tempResult;
+    }
+
+    private void checkConditionDate()
+    {
+
     }
 }

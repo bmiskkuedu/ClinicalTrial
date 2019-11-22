@@ -54,11 +54,13 @@ public class ObservationParserImpl implements IObservation
                 String[] temp = s.split(OBSERVATION_REGEX);
 
                 Observation observation = new Observation();
+
                 observation.code.coding.add(Utils.getCoding(temp[0], CustomAdvice.ErrorCode.INVALID_OBSERVATION));
                 observation.valueQuantity = Utils.getValueQuantity(temp[1], CustomAdvice.ErrorCode.INVALID_OBSERVATION);
+                //String prefix = temp[1].replace(observation.valueQuantity.value, "");
                 observationList.add(observation);
             }
-            observationMap.put(Modifier.eq.getModifier(), observationList);
+            observationMap.put(Modifier.value.getModifier(), observationList);
         }
     }
 
@@ -78,7 +80,7 @@ public class ObservationParserImpl implements IObservation
 
                 observationList.add(observation);
             }
-            observationMap.put(Modifier.eq.getModifier(), observationList);
+            observationMap.put(Modifier.date.getModifier(), observationList);
         }
     }
 

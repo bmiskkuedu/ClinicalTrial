@@ -7,7 +7,7 @@ public enum Prefix
     ne("ne"),
     gt("gt"),
     lt("lt"),
-    ge("qe"),
+    ge("ge"),
     le("le"),
     sa("sa"),
     eb("eb"),

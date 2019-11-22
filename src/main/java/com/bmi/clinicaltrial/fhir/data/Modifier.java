@@ -10,7 +10,9 @@ public enum Modifier
     below("below"),
     in("in"),
     not_in("not-in"),
-    of_type("of-type")
+    of_type("of-type"),
+    value("value"),
+    date("date"),
     ;
 
 
