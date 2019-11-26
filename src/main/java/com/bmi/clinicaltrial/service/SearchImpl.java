@@ -1,21 +1,15 @@
 package com.bmi.clinicaltrial.service;
 
 import com.bmi.clinicaltrial.fhir.data.*;
-import com.bmi.clinicaltrial.fhir.jsondata.AllergyIntolerance;
 import com.bmi.clinicaltrial.fhir.jsondata.Entry;
-import com.bmi.clinicaltrial.fhir.jsondata.MedicationRequest;
 import com.bmi.clinicaltrial.utils.LoadJson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.awt.event.WindowFocusListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -193,11 +187,6 @@ public class SearchImpl implements ISearch
         {
             List<Entry> tempResult = new ArrayList<>();
 
-            Iterator iterator = patient.observationMap.keySet().iterator();
-
-            List<Observation> eqList = new ArrayList<>();
-            List<Observation> notList = new ArrayList<>();
-
             //  eq or not 같이 사용 가능
             if(patient.observationMap.containsKey(Modifier.eq.getModifier()))
             {
@@ -215,10 +204,11 @@ public class SearchImpl implements ISearch
             //  code-value-date 따로 사용
             if(patient.observationMap.containsKey(Modifier.date.getModifier()))
             {
-
+                tempResult = extractObservationDate(beforeResult, patient);
             }
 
             logger.info("checkObservation : " + tempResult.size() + " :: " + tempResult);
+            return tempResult;
         }
 
         return beforeResult;
@@ -382,55 +372,164 @@ public class SearchImpl implements ISearch
 
     private List<Entry> extractObservationValue(List<Entry> beforeResult, Patient patient )
     {
-
         List<Entry> tempResult = new ArrayList<>();
+        List<Entry> tempResult2 = new ArrayList<>();
         List<Observation> observationList = patient.observationMap.get(Modifier.value.getModifier());
+
+        Collections.sort(observationList, new PrefixValueComparator());  //  gt, ge 조건 먼저 검사 후 lt, le 조건 검색
 
         beforeResult.forEach(it->{
             it.observations.forEach(it2->{
                 it2.code.coding.forEach(it3->{
                     observationList.forEach(it4->{
                         it4.code.coding.forEach(it5->{
-                        if (it5.system.equals(it3.system) && it5.code.equals(it3.code))
-                        {
-                            //  it4 : 검색 조건, it2 : 환자 정보
-                            if(observationList.size() > 1)
+                            if (it5.system.equals(it3.system) && it5.code.equals(it3.code))
                             {
-                                //  검색 조건이 여러개
-                            }
-                            else
-                            {
-                                //  검색 조건이 1개
-                                if((it4.valueQuantity.prefix.getPrefix().equals(Prefix.ge.getPrefix())
-                                        && Double.parseDouble(it4.valueQuantity.value) <= Double.parseDouble(it2.valueQuantity.value))
-                                        || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.gt.getPrefix())
-                                        && Double.parseDouble(it4.valueQuantity.value) < Double.parseDouble(it2.valueQuantity.value))
-                                        || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.le.getPrefix())
-                                        && Double.parseDouble(it4.valueQuantity.value) >= Double.parseDouble(it2.valueQuantity.value))
-                                        || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.lt.getPrefix())
-                                        && Double.parseDouble(it4.valueQuantity.value) > Double.parseDouble(it2.valueQuantity.value)))
+                                //  it4 : 검색 조건, it2 : 환자 정보
+                                if(observationList.size() > 1)
                                 {
 
-                                    if(!tempResult.contains(it))
+                                    //  검색 조건이 여러개
+                                    if((it4.valueQuantity.prefix.getPrefix().equals(Prefix.gt.getPrefix()) && Double.parseDouble(it4.valueQuantity.value) < Double.parseDouble(it2.valueQuantity.value))
+                                    ||(it4.valueQuantity.prefix.getPrefix().equals(Prefix.ge.getPrefix()) && Double.parseDouble(it4.valueQuantity.value) <= Double.parseDouble(it2.valueQuantity.value)))
                                     {
-                                        tempResult.add(it);
+                                        if(!tempResult.contains(it))
+                                        {
+                                            tempResult.add(it);
+                                        }
+                                    }
+                                    else if((it4.valueQuantity.prefix.getPrefix().equals(Prefix.lt.getPrefix()) && Double.parseDouble(it4.valueQuantity.value) > Double.parseDouble(it2.valueQuantity.value) && tempResult.contains(it))
+                                    ||(it4.valueQuantity.prefix.getPrefix().equals(Prefix.le.getPrefix()) && Double.parseDouble(it4.valueQuantity.value) >= Double.parseDouble(it2.valueQuantity.value) && tempResult.contains(it)))
+                                    {
+                                        if(!tempResult2.contains(it))
+                                        {
+                                            tempResult2.add(it);
+                                        }
                                     }
                                 }
                                 else
                                 {
-                                    tempResult.remove(it);
+                                    //  검색 조건이 1개
+                                    if((it4.valueQuantity.prefix.getPrefix().equals(Prefix.ge.getPrefix())
+                                            && Double.parseDouble(it4.valueQuantity.value) <= Double.parseDouble(it2.valueQuantity.value))
+                                            || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.gt.getPrefix())
+                                            && Double.parseDouble(it4.valueQuantity.value) < Double.parseDouble(it2.valueQuantity.value))
+                                            || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.le.getPrefix())
+                                            && Double.parseDouble(it4.valueQuantity.value) >= Double.parseDouble(it2.valueQuantity.value))
+                                            || (it4.valueQuantity.prefix.getPrefix().equals(Prefix.lt.getPrefix())
+                                            && Double.parseDouble(it4.valueQuantity.value) > Double.parseDouble(it2.valueQuantity.value)))
+                                    {
+
+                                        if(!tempResult.contains(it))
+                                        {
+                                            tempResult.add(it);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        tempResult.remove(it);
+                                    }
                                 }
-                            }
                         }});
                     });
                 });
             });
         });
+
+        if(observationList.size() > 1)
+        {
+            return tempResult2;
+        }
+
         return tempResult;
     }
 
-    private void checkConditionDate()
+    private List<Entry> extractObservationDate(List<Entry> beforeResult, Patient patient )
     {
+        List<Entry> tempResult = new ArrayList<>();
+        List<Entry> tempResult2 = new ArrayList<>();
+        List<Observation> observationList = patient.observationMap.get(Modifier.date.getModifier());
+        
+        Collections.sort(observationList, new PrefixIssuedComparator());  //  gt, ge 조건 먼저 검사 후 lt, le 조건 검색
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        beforeResult.forEach(it -> {
+            it.observations.forEach(it2 -> {
+                it2.code.coding.forEach(it3 ->{
+                    observationList.forEach(it4 -> {
+                        it4.code.coding.forEach(it5 -> {
+                            //  it4 : 검색 조건, it2 : 환자 정보
+                            if (it5.system.equals(it3.system) && it5.code.equals(it3.code))
+                            {
+                                if (observationList.size() > 1)
+                                {
+                                    //  검색 조건이 여러개
+                                    try
+                                    {
+                                        if ((it4.issued.prefix.getPrefix().equals(Prefix.gt.getPrefix()) && sdf.parse(it4.issued.issued).getTime() < sdf.parse(it2.issued.issued).getTime())
+                                                || (it4.issued.prefix.getPrefix().equals(Prefix.ge.getPrefix()) && sdf.parse(it4.issued.issued).getTime() <= sdf.parse(it2.issued.issued).getTime()))
+                                        {
+                                            if (!tempResult.contains(it))
+                                            {
+                                                tempResult.add(it);
+                                            }
+                                        }
+                                        else if ((it4.issued.prefix.getPrefix().equals(Prefix.lt.getPrefix()) && sdf.parse(it4.issued.issued).getTime() > sdf.parse(it2.issued.issued).getTime())
+                                                || (it4.issued.prefix.getPrefix().equals(Prefix.le.getPrefix()) && sdf.parse(it4.issued.issued).getTime() >= sdf.parse(it2.issued.issued).getTime()))
+                                        {
+                                            if (!tempResult2.contains(it))
+                                            {
+                                                tempResult2.add(it);
+                                            }
+                                        }
+                                    }
+                                    catch (ParseException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                else
+                                {
+                                    //  검색 조건이 1개
+                                    try
+                                    {
+                                        if ((it4.issued.prefix.getPrefix().equals(Prefix.ge.getPrefix())
+                                                && sdf.parse(it4.issued.issued).getTime() <= sdf.parse(it2.issued.issued).getTime())
+                                                || (it4.issued.prefix.getPrefix().equals(Prefix.gt.getPrefix())
+                                                && sdf.parse(it4.issued.issued).getTime() < sdf.parse(it2.issued.issued).getTime())
+                                                || (it4.issued.prefix.getPrefix().equals(Prefix.le.getPrefix())
+                                                && sdf.parse(it4.issued.issued).getTime() >= sdf.parse(it2.issued.issued).getTime())
+                                                || (it4.issued.prefix.getPrefix().equals(Prefix.lt.getPrefix())
+                                                && sdf.parse(it4.issued.issued).getTime() > sdf.parse(it2.issued.issued).getTime()))
+                                        {
+
+                                            if (!tempResult.contains(it))
+                                            {
+                                                tempResult.add(it);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            tempResult.remove(it);
+                                        }
+                                    }
+                                    catch (ParseException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                         });
+                    });
+                });
+            });
+        });
+        if(observationList.size() > 1)
+        {
+            return tempResult2;
+        }
+
+        return tempResult;
     }
 }
