@@ -116,7 +116,7 @@ public class MainController
         //logger.info("Patient : " + patient);
 
         Bundle bundle = new Bundle();
-        bundle.count = search.search(patient);
+        bundle.total = search.search(patient);
 
         return bundle;
     }

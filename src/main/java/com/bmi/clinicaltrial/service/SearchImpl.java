@@ -203,16 +203,14 @@ public class SearchImpl implements ISearch
             if(patient.observationMap.containsKey(Modifier.value.getModifier()))
             {
                 tempResult = extractObservationValue(beforeResult, patient);          //  일치하는 검사 결과 조회
-                logger.info("111` : " + tempResult.size() + " :: ");
             }
             //  code-value-date 따로 사용
             if(patient.observationMap.containsKey(Modifier.date.getModifier()))
             {
                 tempResult = extractObservationDate(beforeResult, patient);
-                logger.info("222 : " + tempResult.size() + " :: ");
             }
 
-            logger.info("checkObservation : " + tempResult.size() + " :: ");
+            //logger.info("checkObservation : " + tempResult.size() + " :: ");
             return tempResult;
         }
 
@@ -403,7 +401,6 @@ public class SearchImpl implements ISearch
                                     {
                                         if(!tempResult.contains(it))
                                         {
-                                            logger.info("111 : search observation : " + it.patient.id + " : " + it4.valueQuantity.prefix.getPrefix() + " :: " + it4.valueQuantity.value + " ::: " + it2.valueQuantity.value);
                                             tempResult.add(it);
                                         }
                                         tempSet.add(it.patient.id);
@@ -413,25 +410,9 @@ public class SearchImpl implements ISearch
                                     {
                                         if(tempResult.contains(it) && !tempResult2.contains(it))
                                         {
-                                            logger.info("222 : search observation : " + it.patient.id + " : " + it4.valueQuantity.prefix.getPrefix() + " :: " + it4.valueQuantity.value + " ::: " + it2.valueQuantity.value);
                                             tempResult2.add(it);
                                         }
-
-                                        /*
-                                        if(!tempResult2.contains(it))
-                                        {
-                                            logger.error("222");
-                                            tempResult2.add(it);
-                                        }
-                                        */
-
                                         tempSet.add(it.patient.id);
-                                    }
-                                    else
-                                    {
-                                        logger.info("333 : search observation : " + it.patient.id + " : " + it4.valueQuantity.prefix.getPrefix() + " :: " + it4.valueQuantity.value + " ::: " + it2.valueQuantity.value);
-                                        //tempSet.remove(it.patient.id);
-                                        //tempResult2.remove(it);
                                     }
                                 }
                                 else
@@ -465,7 +446,6 @@ public class SearchImpl implements ISearch
             });
         });
 
-        logger.info("*** : " + tempSet.size());
         if(observationList.size() > 1)
         {
             return tempResult2;
@@ -502,7 +482,7 @@ public class SearchImpl implements ISearch
                                         {
                                             if (!tempResult.contains(it))
                                             {
-                                                logger.info("add : " + it.patient.id + " ::: " + sdf.parse(it2.issued.issued) + " :: " + sdf.parse(it4.issued.issued));
+                                                //logger.info("add : " + it.patient.id + " ::: " + sdf.parse(it2.issued.issued) + " :: " + sdf.parse(it4.issued.issued));
                                                 tempResult.add(it);
                                             }
                                         }
@@ -511,7 +491,7 @@ public class SearchImpl implements ISearch
                                         {
                                             if (!tempResult2.contains(it))
                                             {
-                                                logger.info("add 2: " + it.patient.id + " ::: " + sdf.parse(it2.issued.issued) + " :: " + sdf.parse(it4.issued.issued));
+                                                //logger.info("add 2: " + it.patient.id + " ::: " + sdf.parse(it2.issued.issued) + " :: " + sdf.parse(it4.issued.issued));
                                                 tempResult2.add(it);
                                             }
                                         }
@@ -558,7 +538,6 @@ public class SearchImpl implements ISearch
             });
         });
 
-        logger.info("aaa : " + tempResult.size() + " /// " + tempResult2.size());
         if(observationList.size() > 1)
         {
             return tempResult2;
