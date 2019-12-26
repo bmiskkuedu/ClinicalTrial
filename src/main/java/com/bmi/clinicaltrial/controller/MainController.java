@@ -1,5 +1,6 @@
 package com.bmi.clinicaltrial.controller;
 
+import com.bmi.clinicaltrial.fhir.data.Bundle;
 import com.bmi.clinicaltrial.fhir.data.Gender;
 import com.bmi.clinicaltrial.fhir.data.Patient;
 import com.bmi.clinicaltrial.parser.*;
@@ -40,7 +41,7 @@ public class MainController
 
     @GetMapping("/Patient")
     @ResponseBody
-    public int findNumberOfPatient(
+    public Bundle findNumberOfPatient(
             //  생년월일 체크
             @RequestParam(required = false) List<String> birthdate,
 
@@ -114,8 +115,9 @@ public class MainController
 
         //logger.info("Patient : " + patient);
 
-        int result = search.search(patient);
+        Bundle bundle = new Bundle();
+        bundle.count = search.search(patient);
 
-        return result;
+        return bundle;
     }
 }

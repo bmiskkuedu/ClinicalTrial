@@ -94,6 +94,7 @@ public class SearchImpl implements ISearch
             if(patient.birthdateMap.keySet().size() > 0)
             {
                 List<Entry> tempResult = new ArrayList<>();
+
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
                 for (int i = 0; i < beforeResult.size(); i++)
@@ -112,6 +113,8 @@ public class SearchImpl implements ISearch
                         || (key.equals("le") && (pDate.before(cDate)))
                         || (key.equals("ge") && (pDate.after(cDate))))
                         {
+                            //tempResult.parallelStream().filter(it -> it.patient.id.equals(p.id)).count();
+
                             if(!tempResult.contains(beforeResult.get(i)))
                             {
                                 tempResult.add(beforeResult.get(i));
@@ -200,14 +203,16 @@ public class SearchImpl implements ISearch
             if(patient.observationMap.containsKey(Modifier.value.getModifier()))
             {
                 tempResult = extractObservationValue(beforeResult, patient);          //  일치하는 검사 결과 조회
+                logger.info("111` : " + tempResult.size() + " :: ");
             }
             //  code-value-date 따로 사용
             if(patient.observationMap.containsKey(Modifier.date.getModifier()))
             {
                 tempResult = extractObservationDate(beforeResult, patient);
+                logger.info("222 : " + tempResult.size() + " :: ");
             }
 
-            logger.info("checkObservation : " + tempResult.size() + " :: " + tempResult);
+            logger.info("checkObservation : " + tempResult.size() + " :: ");
             return tempResult;
         }
 
@@ -370,11 +375,14 @@ public class SearchImpl implements ISearch
         return tempResult;
     }
 
+    // FIXME: 2019-12-24
     private List<Entry> extractObservationValue(List<Entry> beforeResult, Patient patient )
     {
         List<Entry> tempResult = new ArrayList<>();
         List<Entry> tempResult2 = new ArrayList<>();
         List<Observation> observationList = patient.observationMap.get(Modifier.value.getModifier());
+
+        Set<String> tempSet = new HashSet<>();
 
         Collections.sort(observationList, new PrefixValueComparator());  //  gt, ge 조건 먼저 검사 후 lt, le 조건 검색
 
@@ -385,26 +393,45 @@ public class SearchImpl implements ISearch
                         it4.code.coding.forEach(it5->{
                             if (it5.system.equals(it3.system) && it5.code.equals(it3.code))
                             {
+
                                 //  it4 : 검색 조건, it2 : 환자 정보
                                 if(observationList.size() > 1)
                                 {
-
-                                    //  검색 조건이 여러개
+                                    //  검색 조건이 2개 범위
                                     if((it4.valueQuantity.prefix.getPrefix().equals(Prefix.gt.getPrefix()) && Double.parseDouble(it4.valueQuantity.value) < Double.parseDouble(it2.valueQuantity.value))
                                     ||(it4.valueQuantity.prefix.getPrefix().equals(Prefix.ge.getPrefix()) && Double.parseDouble(it4.valueQuantity.value) <= Double.parseDouble(it2.valueQuantity.value)))
                                     {
                                         if(!tempResult.contains(it))
                                         {
+                                            logger.info("111 : search observation : " + it.patient.id + " : " + it4.valueQuantity.prefix.getPrefix() + " :: " + it4.valueQuantity.value + " ::: " + it2.valueQuantity.value);
                                             tempResult.add(it);
                                         }
+                                        tempSet.add(it.patient.id);
                                     }
                                     else if((it4.valueQuantity.prefix.getPrefix().equals(Prefix.lt.getPrefix()) && Double.parseDouble(it4.valueQuantity.value) > Double.parseDouble(it2.valueQuantity.value) && tempResult.contains(it))
                                     ||(it4.valueQuantity.prefix.getPrefix().equals(Prefix.le.getPrefix()) && Double.parseDouble(it4.valueQuantity.value) >= Double.parseDouble(it2.valueQuantity.value) && tempResult.contains(it)))
                                     {
-                                        if(!tempResult2.contains(it))
+                                        if(tempResult.contains(it) && !tempResult2.contains(it))
                                         {
+                                            logger.info("222 : search observation : " + it.patient.id + " : " + it4.valueQuantity.prefix.getPrefix() + " :: " + it4.valueQuantity.value + " ::: " + it2.valueQuantity.value);
                                             tempResult2.add(it);
                                         }
+
+                                        /*
+                                        if(!tempResult2.contains(it))
+                                        {
+                                            logger.error("222");
+                                            tempResult2.add(it);
+                                        }
+                                        */
+
+                                        tempSet.add(it.patient.id);
+                                    }
+                                    else
+                                    {
+                                        logger.info("333 : search observation : " + it.patient.id + " : " + it4.valueQuantity.prefix.getPrefix() + " :: " + it4.valueQuantity.value + " ::: " + it2.valueQuantity.value);
+                                        //tempSet.remove(it.patient.id);
+                                        //tempResult2.remove(it);
                                     }
                                 }
                                 else
@@ -424,10 +451,12 @@ public class SearchImpl implements ISearch
                                         {
                                             tempResult.add(it);
                                         }
+                                        tempSet.add(it.patient.id);
                                     }
                                     else
                                     {
-                                        tempResult.remove(it);
+                                        //tempResult.remove(it);
+                                        //tempSet.remove(it.patient.id);
                                     }
                                 }
                         }});
@@ -436,6 +465,7 @@ public class SearchImpl implements ISearch
             });
         });
 
+        logger.info("*** : " + tempSet.size());
         if(observationList.size() > 1)
         {
             return tempResult2;
@@ -449,10 +479,10 @@ public class SearchImpl implements ISearch
         List<Entry> tempResult = new ArrayList<>();
         List<Entry> tempResult2 = new ArrayList<>();
         List<Observation> observationList = patient.observationMap.get(Modifier.date.getModifier());
-        
+
         Collections.sort(observationList, new PrefixIssuedComparator());  //  gt, ge 조건 먼저 검사 후 lt, le 조건 검색
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
 
         beforeResult.forEach(it -> {
             it.observations.forEach(it2 -> {
@@ -472,14 +502,16 @@ public class SearchImpl implements ISearch
                                         {
                                             if (!tempResult.contains(it))
                                             {
+                                                logger.info("add : " + it.patient.id + " ::: " + sdf.parse(it2.issued.issued) + " :: " + sdf.parse(it4.issued.issued));
                                                 tempResult.add(it);
                                             }
                                         }
-                                        else if ((it4.issued.prefix.getPrefix().equals(Prefix.lt.getPrefix()) && sdf.parse(it4.issued.issued).getTime() > sdf.parse(it2.issued.issued).getTime())
-                                                || (it4.issued.prefix.getPrefix().equals(Prefix.le.getPrefix()) && sdf.parse(it4.issued.issued).getTime() >= sdf.parse(it2.issued.issued).getTime()))
+                                        else if ((it4.issued.prefix.getPrefix().equals(Prefix.lt.getPrefix()) && sdf.parse(it4.issued.issued).getTime() > sdf.parse(it2.issued.issued).getTime() && tempResult.contains(it))
+                                                || (it4.issued.prefix.getPrefix().equals(Prefix.le.getPrefix()) && sdf.parse(it4.issued.issued).getTime() >= sdf.parse(it2.issued.issued).getTime()) && tempResult.contains(it))
                                         {
                                             if (!tempResult2.contains(it))
                                             {
+                                                logger.info("add 2: " + it.patient.id + " ::: " + sdf.parse(it2.issued.issued) + " :: " + sdf.parse(it4.issued.issued));
                                                 tempResult2.add(it);
                                             }
                                         }
@@ -525,6 +557,8 @@ public class SearchImpl implements ISearch
                 });
             });
         });
+
+        logger.info("aaa : " + tempResult.size() + " /// " + tempResult2.size());
         if(observationList.size() > 1)
         {
             return tempResult2;
