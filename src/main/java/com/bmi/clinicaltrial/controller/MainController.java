@@ -5,14 +5,18 @@ import com.bmi.clinicaltrial.fhir.data.Gender;
 import com.bmi.clinicaltrial.fhir.data.Patient;
 import com.bmi.clinicaltrial.parser.*;
 import com.bmi.clinicaltrial.service.SearchImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api")
+@Api(value = "Patient search API" )
 public class MainController
 {
     private Logger logger = LogManager.getLogger();
@@ -41,6 +45,7 @@ public class MainController
 
     @GetMapping("/Patient")
     @ResponseBody
+    @ApiOperation(value = "환자 조회")
     public Bundle findNumberOfPatient(
             //  생년월일 체크
             @RequestParam(required = false) List<String> birthdate,
@@ -75,7 +80,7 @@ public class MainController
              *                      DOSAGE 에서 검색해야 함
              */
             @RequestParam(required = false, name="_has:MedicationRequest:patient:code") List<String> medicationStatement,
-            @RequestParam(required = false, name="_has:MedicationsRequest:patient:code:not") List<String> notMedicationStatement,
+            @RequestParam(required = false, name="_has:MedicationRequest:patient:code:not") List<String> notMedicationStatement,
 
             /**
              *  알러지 체크  ***
